@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — TV AppIcon</title>
+  <style>
+    :root {
+      --bg: #0f0f14;
+      --surface: #1a1a24;
+      --border: #2a2a3a;
+      --accent: #5e7bff;
+      --accent2: #a855f7;
+      --text: #f0f0f5;
+      --muted: #8888a0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 40px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(15,15,20,0.85);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo { font-size: 1.1rem; font-weight: 700; }
+    .nav-logo span { color: var(--accent); }
+    nav a { color: var(--muted); text-decoration: none; font-size: 0.9rem; margin-left: 24px; transition: color 0.2s; }
+    nav a:hover { color: var(--text); }
+    .content {
+      max-width: 740px;
+      margin: 0 auto;
+      padding: 60px 24px 80px;
+    }
+    .page-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      margin-bottom: 8px;
+    }
+    .page-title span {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .updated { font-size: 0.85rem; color: var(--muted); margin-bottom: 48px; }
+    h2 { font-size: 1.15rem; font-weight: 700; margin: 36px 0 10px; color: var(--text); }
+    p { font-size: 0.95rem; color: #c0c0d0; line-height: 1.8; margin-bottom: 12px; }
+    ul { padding-left: 20px; margin-bottom: 12px; }
+    ul li { font-size: 0.95rem; color: #c0c0d0; line-height: 1.8; margin-bottom: 6px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .highlight-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin: 24px 0;
+    }
+    .highlight-box p { margin: 0; }
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    footer p { font-size: 0.85rem; color: var(--muted); }
+    footer a { color: var(--muted); text-decoration: none; margin-left: 20px; font-size: 0.85rem; }
+    footer a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">TV <span>AppIcon</span></div>
+  <div>
+    <a href="index.html">Home</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+  </div>
+</nav>
+
+<div class="content">
+  <h1 class="page-title"><span>Privacy Policy</span></h1>
+  <p class="updated">Last updated: January 1, 2025</p>
+
+  <div class="highlight-box">
+    <p>TV AppIcon does not collect, transmit, or store any personal data. Everything you do stays on your Mac.</p>
+  </div>
+
+  <h2>Overview</h2>
+  <p>TV AppIcon ("the App") is a macOS utility developed by Di Nerd Apps LLC. This Privacy Policy explains how the App handles your information. In short: it doesn't collect any.</p>
+
+  <h2>Information We Do Not Collect</h2>
+  <p>The App does not collect, transmit, or share any of the following:</p>
+  <ul>
+    <li>Personal identifiable information (name, email, address)</li>
+    <li>Images or files you process through the App</li>
+    <li>Usage analytics or behavioral data</li>
+    <li>Device identifiers or IP addresses</li>
+    <li>Crash reports or diagnostics sent to our servers</li>
+  </ul>
+
+  <h2>How the App Works</h2>
+  <p>All image processing happens entirely on your local machine. When you drop an image into the App and export, the files are written directly to a folder you choose on your Mac. No data leaves your device at any point.</p>
+
+  <h2>Third-Party Services</h2>
+  <p>The App does not integrate with any third-party analytics, advertising, or tracking services. It does not make any network requests except to load the in-app documentation pages hosted on GitHub Pages.</p>
+
+  <h2>macOS App Sandbox</h2>
+  <p>TV AppIcon runs in the macOS App Sandbox. It only accesses files in folders you explicitly select through the system file picker. It has no access to the rest of your file system.</p>
+
+  <h2>Children's Privacy</h2>
+  <p>The App does not collect data from anyone, including children under the age of 13. It is a developer tool and not directed at children.</p>
+
+  <h2>Changes to This Policy</h2>
+  <p>If this policy changes, we will update the date at the top of this page. Since the App collects no data, changes are unlikely to affect your privacy in any meaningful way.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about this policy? Contact us at <a href="mailto:support@dinerdapps.com">support@dinerdapps.com</a>.</p>
+</div>
+
+<footer>
+  <p>© 2025 Di Nerd Apps LLC. All rights reserved.</p>
+  <div>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Use</a>
+  </div>
+</footer>
+
+</body>
+</html>
