@@ -16,12 +16,16 @@ struct ContentView: View {
             GuidanceView()
                 .tabItem { Label("Guide", systemImage: "info.circle") }
                 .tag(AppTab.guide)
+
+            SettingsView()
+                .tabItem { Label("Settings", systemImage: "gearshape") }
+                .tag(AppTab.settings)
         }
         .frame(minWidth: 900, minHeight: 680)
     }
 }
 
-enum AppTab { case export, guide }
+enum AppTab { case export, guide, settings }
 
 // MARK: - Export View
 
@@ -31,8 +35,12 @@ struct ExportView: View {
     @State private var isExporting = false
     @State private var exportResult: ExportResultState = .idle
     @State private var isDroppingSource = false
-    @State private var isDroppingLayer: IconLayer? = nil
     @State private var showSizeList = false
+    @State private var showSuccessAlert = false
+    @State private var successCount = 0
+    @State private var successFolderURL: URL? = nil
+    @State private var showErrorAlert = false
+    @State private var errorMessage = ""
 
     var body: some View {
         ScrollView {
@@ -46,6 +54,21 @@ struct ExportView: View {
             .padding(32)
         }
         .background(backgroundGradient)
+        .alert("Export Complete", isPresented: $showSuccessAlert, actions: {
+            Button("Open Folder") {
+                if let url = successFolderURL { NSWorkspace.shared.open(url) }
+            }
+            Button("OK", role: .cancel) {}
+        }, message: {
+            if let url = successFolderURL {
+                Text("\(successCount) files exported successfully.\n\nSaved to:\n\(url.path)")
+            }
+        })
+        .alert("Export Failed", isPresented: $showErrorAlert, actions: {
+            Button("OK", role: .cancel) {}
+        }, message: {
+            Text(errorMessage)
+        })
     }
 
     // MARK: - Header
@@ -161,7 +184,6 @@ struct ExportView: View {
                     LayerDropCard(
                         layer: layer,
                         image: layerImages[layer],
-                        isTargeted: isDroppingLayer == layer,
                         onDrop: { providers in handleDrop(providers: providers, forLayer: layer) },
                         onClear: { layerImages.removeValue(forKey: layer) },
                         onChoose: { openLayerImagePicker(for: layer) }
@@ -265,24 +287,31 @@ struct ExportView: View {
 
     private func handleDrop(providers: [NSItemProvider], forLayer layer: IconLayer?) -> Bool {
         guard let provider = providers.first else { return false }
-        if provider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) {
-            provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { item, _ in
-                guard let data = item as? Data,
-                      let url = URL(dataRepresentation: data, relativeTo: nil),
-                      let img = NSImage(contentsOf: url) else { return }
-                DispatchQueue.main.async {
-                    if let layer { layerImages[layer] = img } else { sourceImage = img }
-                }
+        guard provider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) else { return false }
+
+        provider.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil) { item, _ in
+            // macOS Finder delivers the URL as NSURL, Data, or String — handle all three
+            let url: URL?
+            if let nsURL = item as? NSURL {
+                url = nsURL as URL
+            } else if let data = item as? Data {
+                url = URL(dataRepresentation: data, relativeTo: nil)
+            } else if let str = item as? String {
+                url = URL(string: str)
+            } else {
+                url = nil
             }
-            return true
+
+            guard let resolved = url, let img = NSImage(contentsOf: resolved) else { return }
+            DispatchQueue.main.async {
+                if let layer { self.layerImages[layer] = img } else { self.sourceImage = img }
+            }
         }
-        return false
+        return true
     }
 
     private func runExport() {
         guard let src = sourceImage else { return }
-        isExporting = true
-        exportResult = .idle
 
         let panel = NSOpenPanel()
         panel.canChooseFiles = false
@@ -291,25 +320,24 @@ struct ExportView: View {
         panel.prompt = "Export Here"
         panel.message = "Choose a folder to save all exported icon files"
 
-        guard panel.runModal() == .OK, let outputURL = panel.url else {
-            isExporting = false
-            return
-        }
+        guard panel.runModal() == .OK, let outputURL = panel.url else { return }
 
-        let layers = layerImages
-        Task {
-            do {
-                let count = try await exportAllSizes(sourceImage: src, layers: layers, outputURL: outputURL)
-                await MainActor.run {
-                    isExporting = false
-                    exportResult = .success(count: count, folderURL: outputURL)
-                }
-            } catch {
-                await MainActor.run {
-                    isExporting = false
-                    exportResult = .failure(message: error.localizedDescription)
-                }
-            }
+        isExporting = true
+        exportResult = .idle
+
+        do {
+            let count = try exportAllSizes(sourceImage: src, layers: layerImages, outputURL: outputURL)
+            isExporting = false
+            exportResult = .success(count: count, folderURL: outputURL)
+            // Also show a prominent alert
+            successCount = count
+            successFolderURL = outputURL
+            showSuccessAlert = true
+        } catch {
+            isExporting = false
+            exportResult = .failure(message: error.localizedDescription)
+            errorMessage = error.localizedDescription
+            showErrorAlert = true
         }
     }
 }
@@ -325,10 +353,11 @@ enum ExportResultState {
 struct LayerDropCard: View {
     let layer: IconLayer
     let image: NSImage?
-    let isTargeted: Bool
     let onDrop: ([NSItemProvider]) -> Bool
     let onClear: () -> Void
     let onChoose: () -> Void
+
+    @State private var isTargeted = false
 
     var body: some View {
         VStack(spacing: 12) {
@@ -376,7 +405,7 @@ struct LayerDropCard: View {
                     }
                 }
             }
-            .onDrop(of: [.fileURL, .image, .png, .jpeg], isTargeted: .constant(isTargeted)) { providers in
+            .onDrop(of: [.fileURL, .image, .png, .jpeg], isTargeted: $isTargeted) { providers in
                 onDrop(providers)
             }
             .onTapGesture { if image == nil { onChoose() } }
@@ -402,27 +431,38 @@ struct LayerDropCard: View {
 // MARK: - Size List View
 
 struct SizeListView: View {
+    // Group by slotFolder (the numbered top-level subfolder = one Xcode slot)
     private let groups: [(String, [TVOSIconSize])] = {
-        let names = ["App Icon Small", "App Icon Large", "Top Shelf", "Top Shelf Wide"]
-        return names.map { name in
-            (name, tvOSIconSizes.filter { $0.name == name && $0.layer == .front })
+        var seen: [String] = []
+        var result: [(String, [TVOSIconSize])] = []
+        for size in tvOSIconSizes {
+            if !seen.contains(size.slotFolder) {
+                seen.append(size.slotFolder)
+                let group = tvOSIconSizes.filter { $0.slotFolder == size.slotFolder }
+                result.append((size.slotFolder, group))
+            }
         }
+        return result
     }()
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Required Export Sizes (per layer)")
+            Text("Exported Files — grouped by Xcode slot")
                 .font(.subheadline.weight(.semibold))
                 .padding(.bottom, 4)
 
-            ForEach(groups, id: \.0) { name, sizes in
+            ForEach(groups, id: \.0) { folder, sizes in
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(name)
+                    Text(folder)
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.secondary)
+                    // Show unique sizes for this slot
+                    let uniqueSizes = sizes.reduce(into: [String]()) { acc, s in
+                        if !acc.contains(s.displaySize) { acc.append(s.displaySize) }
+                    }
                     HStack(spacing: 8) {
-                        ForEach(sizes) { size in
-                            Text(size.displaySize)
+                        ForEach(uniqueSizes, id: \.self) { size in
+                            Text(size)
                                 .font(.caption2)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
@@ -431,7 +471,7 @@ struct SizeListView: View {
                     }
                 }
             }
-            Text("Each size is exported for all 3 layers (Back, Middle, Front) = \(tvOSIconSizes.count) total files.")
+            Text("\(tvOSIconSizes.count) total files across 4 subfolders.")
                 .font(.caption)
                 .foregroundStyle(.tertiary)
                 .padding(.top, 4)

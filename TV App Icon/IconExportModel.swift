@@ -5,18 +5,29 @@ import AppKit
 
 struct TVOSIconSize: Identifiable {
     let id = UUID()
-    let name: String
+    /// Top-level folder — matches the Xcode asset catalog slot name
+    let slotFolder: String
+    /// Second-level folder — the layer (Front / Middle / Back)
     let layer: IconLayer
+    /// Third-level folder — the scale (@1x or @2x)
+    let scale: Int
     let width: Int
     let height: Int
-    let scale: Int
-    let usage: String
 
-    var filename: String {
-        "\(layer.rawValue)_\(name.replacingOccurrences(of: " ", with: "_"))_\(width)x\(height)@\(scale)x.png"
+    /// Simple filename: just the pixel dimensions so it's easy to read at a glance
+    var filename: String { "\(width)x\(height).png" }
+
+    /// Full nested path: SlotFolder / Layer / @Nx / filename
+    /// For single-scale slots the @Nx folder is omitted for simplicity
+    var relativePath: String {
+        if slotFolder.hasPrefix("1 -") {
+            // App Icon - App Store only has one size per layer — no scale subfolder needed
+            return "\(slotFolder)/\(layer.rawValue)/\(filename)"
+        }
+        return "\(slotFolder)/\(layer.rawValue)/@\(scale)x/\(filename)"
     }
 
-    var displaySize: String { "\(width)×\(height) @\(scale)x" }
+    var displaySize: String { "\(width)x\(height) @\(scale)x" }
 }
 
 enum IconLayer: String, CaseIterable, Identifiable {
@@ -54,40 +65,44 @@ enum IconLayer: String, CaseIterable, Identifiable {
     }
 }
 
-// tvOS requires specific sizes for each icon slot and layer
-// Ref: Apple Human Interface Guidelines / Asset Catalog documentation
+// Exported files are nested: Slot > Layer > @Scale > filename.png
+// This maps 1-to-1 with what you see in Xcode's asset catalog.
 let tvOSIconSizes: [TVOSIconSize] = [
-    // App Icon Small (focus state on Home Screen)
-    TVOSIconSize(name: "App Icon Small", layer: .back,   width: 240,  height: 240,  scale: 1, usage: "Home Screen small"),
-    TVOSIconSize(name: "App Icon Small", layer: .back,   width: 480,  height: 480,  scale: 2, usage: "Home Screen small"),
-    TVOSIconSize(name: "App Icon Small", layer: .middle, width: 240,  height: 240,  scale: 1, usage: "Home Screen small"),
-    TVOSIconSize(name: "App Icon Small", layer: .middle, width: 480,  height: 480,  scale: 2, usage: "Home Screen small"),
-    TVOSIconSize(name: "App Icon Small", layer: .front,  width: 240,  height: 240,  scale: 1, usage: "Home Screen small"),
-    TVOSIconSize(name: "App Icon Small", layer: .front,  width: 480,  height: 480,  scale: 2, usage: "Home Screen small"),
 
-    // App Icon Large (default Home Screen display)
-    TVOSIconSize(name: "App Icon Large", layer: .back,   width: 400,  height: 240,  scale: 1, usage: "Home Screen large"),
-    TVOSIconSize(name: "App Icon Large", layer: .back,   width: 800,  height: 480,  scale: 2, usage: "Home Screen large"),
-    TVOSIconSize(name: "App Icon Large", layer: .middle, width: 400,  height: 240,  scale: 1, usage: "Home Screen large"),
-    TVOSIconSize(name: "App Icon Large", layer: .middle, width: 800,  height: 480,  scale: 2, usage: "Home Screen large"),
-    TVOSIconSize(name: "App Icon Large", layer: .front,  width: 400,  height: 240,  scale: 1, usage: "Home Screen large"),
-    TVOSIconSize(name: "App Icon Large", layer: .front,  width: 800,  height: 480,  scale: 2, usage: "Home Screen large"),
+    // ── 1. App Icon - App Store ───────────────────────────────────────────────
+    // Drag into: App Icon & Top Shelf Image > App Icon - App Store > Front / Middle / Back
+    // Note: only the standard size works for this slot — use the file inside each layer folder
+    TVOSIconSize(slotFolder: "1 - App Icon - App Store", layer: .front,  scale: 1, width: 1280, height: 768),
+    TVOSIconSize(slotFolder: "1 - App Icon - App Store", layer: .middle, scale: 1, width: 1280, height: 768),
+    TVOSIconSize(slotFolder: "1 - App Icon - App Store", layer: .back,   scale: 1, width: 1280, height: 768),
 
-    // Top Shelf Image (wide banner shown at top when app is selected)
-    TVOSIconSize(name: "Top Shelf",      layer: .back,   width: 1920, height: 720,  scale: 1, usage: "Top Shelf"),
-    TVOSIconSize(name: "Top Shelf",      layer: .back,   width: 3840, height: 1440, scale: 2, usage: "Top Shelf"),
-    TVOSIconSize(name: "Top Shelf",      layer: .middle, width: 1920, height: 720,  scale: 1, usage: "Top Shelf"),
-    TVOSIconSize(name: "Top Shelf",      layer: .middle, width: 3840, height: 1440, scale: 2, usage: "Top Shelf"),
-    TVOSIconSize(name: "Top Shelf",      layer: .front,  width: 1920, height: 720,  scale: 1, usage: "Top Shelf"),
-    TVOSIconSize(name: "Top Shelf",      layer: .front,  width: 3840, height: 1440, scale: 2, usage: "Top Shelf"),
+    // ── 2. App Icon - Large (Home Screen landscape slot) ──────────────────────
+    // Drag into: App Icon & Top Shelf Image > App Icon > Front / Middle / Back (landscape well)
+    TVOSIconSize(slotFolder: "2 - App Icon (Large 400x240)", layer: .front,  scale: 1, width: 400,  height: 240),
+    TVOSIconSize(slotFolder: "2 - App Icon (Large 400x240)", layer: .front,  scale: 2, width: 800,  height: 480),
+    TVOSIconSize(slotFolder: "2 - App Icon (Large 400x240)", layer: .middle, scale: 1, width: 400,  height: 240),
+    TVOSIconSize(slotFolder: "2 - App Icon (Large 400x240)", layer: .middle, scale: 2, width: 800,  height: 480),
+    TVOSIconSize(slotFolder: "2 - App Icon (Large 400x240)", layer: .back,   scale: 1, width: 400,  height: 240),
+    TVOSIconSize(slotFolder: "2 - App Icon (Large 400x240)", layer: .back,   scale: 2, width: 800,  height: 480),
 
-    // Top Shelf Wide (featured row)
-    TVOSIconSize(name: "Top Shelf Wide", layer: .back,   width: 2320, height: 720,  scale: 1, usage: "Top Shelf Wide"),
-    TVOSIconSize(name: "Top Shelf Wide", layer: .back,   width: 4640, height: 1440, scale: 2, usage: "Top Shelf Wide"),
-    TVOSIconSize(name: "Top Shelf Wide", layer: .middle, width: 2320, height: 720,  scale: 1, usage: "Top Shelf Wide"),
-    TVOSIconSize(name: "Top Shelf Wide", layer: .middle, width: 4640, height: 1440, scale: 2, usage: "Top Shelf Wide"),
-    TVOSIconSize(name: "Top Shelf Wide", layer: .front,  width: 2320, height: 720,  scale: 1, usage: "Top Shelf Wide"),
-    TVOSIconSize(name: "Top Shelf Wide", layer: .front,  width: 4640, height: 1440, scale: 2, usage: "Top Shelf Wide"),
+    // ── 3. App Icon - Small (Home Screen square/focus slot) ───────────────────
+    // Drag into: App Icon & Top Shelf Image > App Icon > Front / Middle / Back (square well)
+    TVOSIconSize(slotFolder: "3 - App Icon (Small 240x240)", layer: .front,  scale: 1, width: 240,  height: 240),
+    TVOSIconSize(slotFolder: "3 - App Icon (Small 240x240)", layer: .front,  scale: 2, width: 480,  height: 480),
+    TVOSIconSize(slotFolder: "3 - App Icon (Small 240x240)", layer: .middle, scale: 1, width: 240,  height: 240),
+    TVOSIconSize(slotFolder: "3 - App Icon (Small 240x240)", layer: .middle, scale: 2, width: 480,  height: 480),
+    TVOSIconSize(slotFolder: "3 - App Icon (Small 240x240)", layer: .back,   scale: 1, width: 240,  height: 240),
+    TVOSIconSize(slotFolder: "3 - App Icon (Small 240x240)", layer: .back,   scale: 2, width: 480,  height: 480),
+
+    // ── 4. Top Shelf Image Wide ───────────────────────────────────────────────
+    // Drag into: App Icon & Top Shelf Image > Top Shelf Image Wide
+    TVOSIconSize(slotFolder: "4 - Top Shelf Image Wide", layer: .front, scale: 1, width: 2320, height: 720),
+    TVOSIconSize(slotFolder: "4 - Top Shelf Image Wide", layer: .front, scale: 2, width: 4640, height: 1440),
+
+    // ── 5. Top Shelf Image ────────────────────────────────────────────────────
+    // Drag into: App Icon & Top Shelf Image > Top Shelf Image
+    TVOSIconSize(slotFolder: "5 - Top Shelf Image", layer: .front, scale: 1, width: 1920, height: 720),
+    TVOSIconSize(slotFolder: "5 - Top Shelf Image", layer: .front, scale: 2, width: 3840, height: 1440),
 ]
 
 // MARK: - Export Engine
@@ -104,36 +119,50 @@ enum ExportError: LocalizedError {
     }
 }
 
-func resizeImage(_ nsImage: NSImage, to size: CGSize) -> NSImage? {
-    let newImage = NSImage(size: size)
-    newImage.lockFocus()
-    NSGraphicsContext.current?.imageInterpolation = .high
-    nsImage.draw(in: NSRect(origin: .zero, size: size),
-                 from: NSRect(origin: .zero, size: nsImage.size),
-                 operation: .copy,
-                 fraction: 1.0)
-    newImage.unlockFocus()
-    return newImage
+// NSImage drawing (lockFocus/unlockFocus) must happen on the main thread.
+@MainActor
+func resizeImage(_ nsImage: NSImage, to size: CGSize) -> Data? {
+    // Use CGContext for thread-safe, high-quality rendering
+    guard let cgImage = nsImage.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+        return nil
+    }
+
+    let colorSpace = CGColorSpaceCreateDeviceRGB()
+    let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.premultipliedLast.rawValue)
+    guard let context = CGContext(
+        data: nil,
+        width: Int(size.width),
+        height: Int(size.height),
+        bitsPerComponent: 8,
+        bytesPerRow: 0,
+        space: colorSpace,
+        bitmapInfo: bitmapInfo.rawValue
+    ) else { return nil }
+
+    context.interpolationQuality = .high
+    context.draw(cgImage, in: CGRect(origin: .zero, size: size))
+
+    guard let rendered = context.makeImage() else { return nil }
+
+    let rep = NSBitmapImageRep(cgImage: rendered)
+    rep.size = size
+    return rep.representation(using: .png, properties: [:])
 }
 
-func exportAllSizes(sourceImage: NSImage, layers: [IconLayer: NSImage], outputURL: URL) async throws -> Int {
+@MainActor
+func exportAllSizes(sourceImage: NSImage, layers: [IconLayer: NSImage], outputURL: URL) throws -> Int {
     var count = 0
     let fileManager = FileManager.default
 
     for iconSize in tvOSIconSizes {
         let layerImage = layers[iconSize.layer] ?? sourceImage
-        guard let resized = resizeImage(layerImage, to: CGSize(width: iconSize.width, height: iconSize.height)),
-              let tiff = resized.tiffRepresentation,
-              let bitmap = NSBitmapImageRep(data: tiff),
-              let pngData = bitmap.representation(using: .png, properties: [:]) else {
+        guard let pngData = resizeImage(layerImage, to: CGSize(width: iconSize.width, height: iconSize.height)) else {
             continue
         }
 
-        // Group by layer subfolder
-        let layerFolder = outputURL.appendingPathComponent(iconSize.layer.rawValue)
-        try fileManager.createDirectory(at: layerFolder, withIntermediateDirectories: true)
-
-        let fileURL = layerFolder.appendingPathComponent(iconSize.filename)
+        // Nest as: Slot > Layer > @Nx > filename.png
+        let fileURL = outputURL.appendingPathComponent(iconSize.relativePath)
+        try fileManager.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
         try pngData.write(to: fileURL)
         count += 1
     }
