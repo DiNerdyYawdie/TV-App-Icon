@@ -5,9 +5,9 @@ import WebKit
 
 struct SettingsView: View {
     // Update these URLs once the GitHub Pages site is live
-    private let homeURL      = URL(string: "https://dinerdyawdie.github.io/tv-appicon/")!
-    private let privacyURL   = URL(string: "https://dinerdyawdie.github.io/tv-appicon/privacy.html")!
-    private let termsURL     = URL(string: "https://dinerdyawdie.github.io/tv-appicon/terms.html")!
+    private let homeURL      = URL(string: "https://dinerdyawdie.github.io/TV-App-Icon/")!
+    private let privacyURL   = URL(string: "https://dinerdyawdie.github.io/TV-App-Icon/privacy.html")!
+    private let termsURL     = URL(string: "https://dinerdyawdie.github.io/TV-App-Icon/terms.html")!
 
     @State private var selectedPage: SettingsPage = .general
 
@@ -228,7 +228,7 @@ struct GeneralSettingsPanel: View {
                         }
                         Divider().padding(.leading, 46)
                         LinkRow(icon: "globe", color: .indigo, label: "Di Nerd Apps Website", subtitle: "dinerdapps.com") {
-                            if let url = URL(string: "https://dinerdyawdie.github.io/tv-appicon/") {
+                            if let url = URL(string: "https://dinerdyawdie.github.io/TV-App-Icon/") {
                                 NSWorkspace.shared.open(url)
                             }
                         }
