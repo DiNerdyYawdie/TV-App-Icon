@@ -1,0 +1,77 @@
+{
+  "identifier" : "TV_AppIcon",
+  "nonConsumableProducts" : [
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "1",
+      "localizations" : [
+        {
+          "description" : "Unlock all export slots including App Store and Top Shelf.",
+          "displayName" : "TV AppIcon Pro",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "unlimitedaccess.tvicon",
+      "referenceName" : "TV AppIcon Pro",
+      "type" : "NonConsumable"
+    }
+  ],
+  "consumableProducts" : [
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "2",
+      "localizations" : [
+        {
+          "description" : "Buy me a coffee.",
+          "displayName" : "Small Tip",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "smalltime.tvicon",
+      "referenceName" : "Small Tip",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "3",
+      "localizations" : [
+        {
+          "description" : "Buy me a slice of pizza.",
+          "displayName" : "Medium Tip",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "mediumtip.tvicon",
+      "referenceName" : "Medium Tip",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "4",
+      "localizations" : [
+        {
+          "description" : "Buy me a rocket.",
+          "displayName" : "Large Tip",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "largetip.tvicon",
+      "referenceName" : "Large Tip",
+      "type" : "Consumable"
+    }
+  ],
+  "autoRenewableSubscriptions" : [],
+  "nonRenewingSubscriptions" : [],
+  "settings" : {
+    "_locale" : "en_US",
+    "_storefront" : "USA"
+  },
+  "version" : {
+    "major" : 2,
+    "minor" : 0
+  }
+}

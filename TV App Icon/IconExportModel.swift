@@ -150,11 +150,18 @@ func resizeImage(_ nsImage: NSImage, to size: CGSize) -> Data? {
 }
 
 @MainActor
-func exportAllSizes(sourceImage: NSImage, layers: [IconLayer: NSImage], outputURL: URL) throws -> Int {
+func exportAllSizes(sourceImage: NSImage, layers: [IconLayer: NSImage],
+                    outputURL: URL, proOnly: Bool = true) throws -> Int {
     var count = 0
     let fileManager = FileManager.default
 
-    for iconSize in tvOSIconSizes {
+    // Free tier: only Home Screen Large & Small slots (folders 2 and 3)
+    let freeSlotPrefixes = ["2 -", "3 -"]
+    let sizes = proOnly ? tvOSIconSizes : tvOSIconSizes.filter { size in
+        freeSlotPrefixes.contains(where: { size.slotFolder.hasPrefix($0) })
+    }
+
+    for iconSize in sizes {
         let layerImage = layers[iconSize.layer] ?? sourceImage
         guard let pngData = resizeImage(layerImage, to: CGSize(width: iconSize.width, height: iconSize.height)) else {
             continue

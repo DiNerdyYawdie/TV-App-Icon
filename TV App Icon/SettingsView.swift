@@ -5,9 +5,9 @@ import WebKit
 
 struct SettingsView: View {
     // Update these URLs once the GitHub Pages site is live
-    private let homeURL      = URL(string: "https://dinerdyawdie.github.io/TV-App-Icon/")!
-    private let privacyURL   = URL(string: "https://dinerdyawdie.github.io/TV-App-Icon/privacy.html")!
-    private let termsURL     = URL(string: "https://dinerdyawdie.github.io/TV-App-Icon/terms.html")!
+    private let homeURL      = URL(string: "https://dinerdyyawdie.github.io/TV-App-Icon/")!
+    private let privacyURL   = URL(string: "https://dinerdyyawdie.github.io/TV-App-Icon/privacy.html")!
+    private let termsURL     = URL(string: "https://dinerdyyawdie.github.io/TV-App-Icon/terms.html")!
 
     @State private var selectedPage: SettingsPage = .general
 
@@ -158,12 +158,56 @@ enum SettingsPage: String, CaseIterable {
 struct GeneralSettingsPanel: View {
     @AppStorage("exportFolderRemembered") private var exportFolderRemembered = false
     @AppStorage("showSizesOnLaunch")      private var showSizesOnLaunch      = false
+    @State private var showPaywall  = false
+    @State private var showTipJar   = false
+
+    var store: StoreModel = .shared
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 28) {
 
                 panelHeader(icon: "gearshape.fill", title: "General", color: .blue)
+
+                // Pro / Tip Jar card
+                VStack(alignment: .leading, spacing: 12) {
+                    sectionLabel(store.isPro ? "You're Pro!" : "Upgrade")
+
+                    VStack(spacing: 0) {
+                        if store.isPro {
+                            // Already pro — show status
+                            HStack(spacing: 12) {
+                                Image(systemName: "crown.fill")
+                                    .frame(width: 28, height: 28)
+                                    .background(Color.yellow.opacity(0.15), in: RoundedRectangle(cornerRadius: 7))
+                                    .foregroundStyle(.yellow)
+                                VStack(alignment: .leading, spacing: 1) {
+                                    Text("TV AppIcon Pro").font(.subheadline)
+                                    Text("All slots unlocked — thank you!").font(.caption).foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Image(systemName: "checkmark.seal.fill").foregroundStyle(.green)
+                            }
+                            .padding(14)
+                        } else {
+                            LinkRow(icon: "crown.fill", color: .yellow,
+                                    label: "Unlock Pro",
+                                    subtitle: "App Store, Top Shelf & all layers") {
+                                showPaywall = true
+                            }
+                            Divider().padding(.leading, 46)
+                        }
+
+                        LinkRow(icon: "heart.fill", color: .pink,
+                                label: "Tip Jar",
+                                subtitle: "Support indie development ❤️") {
+                            showTipJar = true
+                        }
+                    }
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))
+                }
+                .sheet(isPresented: $showPaywall) { PaywallView(store: store) }
+                .sheet(isPresented: $showTipJar)  { TipJarView(store: store)  }
 
                 // About card
                 VStack(alignment: .leading, spacing: 16) {
@@ -209,32 +253,6 @@ struct GeneralSettingsPanel: View {
                     .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))
                 }
 
-                // Quick links card
-                VStack(alignment: .leading, spacing: 12) {
-                    sectionLabel("Quick Links")
-
-                    VStack(spacing: 0) {
-                        LinkRow(icon: "star.fill", color: .yellow, label: "Rate TV AppIcon", subtitle: "Enjoying the app? Leave a review") {
-                            // Replace with your App Store ID when live
-                            if let url = URL(string: "macappstore://apps.apple.com/app/id0") {
-                                NSWorkspace.shared.open(url)
-                            }
-                        }
-                        Divider().padding(.leading, 46)
-                        LinkRow(icon: "envelope.fill", color: .blue, label: "Contact Support", subtitle: "support@dinerdapps.com") {
-                            if let url = URL(string: "mailto:support@dinerdapps.com") {
-                                NSWorkspace.shared.open(url)
-                            }
-                        }
-                        Divider().padding(.leading, 46)
-                        LinkRow(icon: "globe", color: .indigo, label: "Di Nerd Apps Website", subtitle: "dinerdapps.com") {
-                            if let url = URL(string: "https://dinerdyawdie.github.io/TV-App-Icon/") {
-                                NSWorkspace.shared.open(url)
-                            }
-                        }
-                    }
-                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))
-                }
             }
             .padding(28)
         }

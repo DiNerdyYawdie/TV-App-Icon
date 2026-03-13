@@ -1,9 +1,70 @@
 {
   "images" : [
     {
+      "filename" : "a-sleek-flat-screen-television-with-a-th_Ve9pYPWpRk6egc40ummsIA_R5QxeePZRQ2U_JzzB5i5Bw_sd.jpeg",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
+    },
+    {
+      "filename" : "a-sleek-flat-screen-television-with-a-th_Ve9pYPWpRk6egc40ummsIA_R5QxeePZRQ2U_JzzB5i5Bw_sd 10.jpeg",
+      "idiom" : "mac",
+      "scale" : "1x",
+      "size" : "16x16"
+    },
+    {
+      "filename" : "a-sleek-flat-screen-television-with-a-th_Ve9pYPWpRk6egc40ummsIA_R5QxeePZRQ2U_JzzB5i5Bw_sd 9.jpeg",
+      "idiom" : "mac",
+      "scale" : "2x",
+      "size" : "16x16"
+    },
+    {
+      "filename" : "a-sleek-flat-screen-television-with-a-th_Ve9pYPWpRk6egc40ummsIA_R5QxeePZRQ2U_JzzB5i5Bw_sd 8.jpeg",
+      "idiom" : "mac",
+      "scale" : "1x",
+      "size" : "32x32"
+    },
+    {
+      "filename" : "a-sleek-flat-screen-television-with-a-th_Ve9pYPWpRk6egc40ummsIA_R5QxeePZRQ2U_JzzB5i5Bw_sd 7.jpeg",
+      "idiom" : "mac",
+      "scale" : "2x",
+      "size" : "32x32"
+    },
+    {
+      "filename" : "a-sleek-flat-screen-television-with-a-th_Ve9pYPWpRk6egc40ummsIA_R5QxeePZRQ2U_JzzB5i5Bw_sd 6.jpeg",
+      "idiom" : "mac",
+      "scale" : "1x",
+      "size" : "128x128"
+    },
+    {
+      "filename" : "a-sleek-flat-screen-television-with-a-th_Ve9pYPWpRk6egc40ummsIA_R5QxeePZRQ2U_JzzB5i5Bw_sd 5.jpeg",
+      "idiom" : "mac",
+      "scale" : "2x",
+      "size" : "128x128"
+    },
+    {
+      "filename" : "a-sleek-flat-screen-television-with-a-th_Ve9pYPWpRk6egc40ummsIA_R5QxeePZRQ2U_JzzB5i5Bw_sd 4.jpeg",
+      "idiom" : "mac",
+      "scale" : "1x",
+      "size" : "256x256"
+    },
+    {
+      "filename" : "a-sleek-flat-screen-television-with-a-th_Ve9pYPWpRk6egc40ummsIA_R5QxeePZRQ2U_JzzB5i5Bw_sd 3.jpeg",
+      "idiom" : "mac",
+      "scale" : "2x",
+      "size" : "256x256"
+    },
+    {
+      "filename" : "a-sleek-flat-screen-television-with-a-th_Ve9pYPWpRk6egc40ummsIA_R5QxeePZRQ2U_JzzB5i5Bw_sd 2.jpeg",
+      "idiom" : "mac",
+      "scale" : "1x",
+      "size" : "512x512"
+    },
+    {
+      "filename" : "a-sleek-flat-screen-television-with-a-th_Ve9pYPWpRk6egc40ummsIA_R5QxeePZRQ2U_JzzB5i5Bw_sd 1.jpeg",
+      "idiom" : "mac",
+      "scale" : "2x",
+      "size" : "512x512"
     }
   ],
   "info" : {

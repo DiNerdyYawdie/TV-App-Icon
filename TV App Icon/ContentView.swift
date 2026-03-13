@@ -41,11 +41,17 @@ struct ExportView: View {
     @State private var successFolderURL: URL? = nil
     @State private var showErrorAlert = false
     @State private var errorMessage = ""
+    @State private var showPaywall = false
+
+    var store: StoreModel = .shared
 
     var body: some View {
         ScrollView {
             VStack(spacing: 28) {
                 headerSection
+                if !store.isPro {
+                    proBanner
+                }
                 sourceDropSection
                 layerSection
                 exportButtonSection
@@ -89,6 +95,62 @@ struct ExportView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
+    }
+
+    // MARK: - Pro Banner
+
+    private var proBanner: some View {
+        Button { showPaywall = true } label: {
+            HStack(spacing: 14) {
+                ZStack {
+                    Circle()
+                        .fill(LinearGradient(colors: [.blue.opacity(0.3), .purple.opacity(0.3)],
+                                             startPoint: .topLeading, endPoint: .bottomTrailing))
+                        .frame(width: 40, height: 40)
+                    Image(systemName: "crown.fill")
+                        .foregroundStyle(.yellow)
+                        .font(.system(size: 16, weight: .semibold))
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Free plan — Home Screen only")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.primary)
+                    Text("Unlock Pro to export App Store & Top Shelf icons")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Text("Unlock")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        LinearGradient(colors: [.blue, .purple],
+                                       startPoint: .leading, endPoint: .trailing),
+                        in: Capsule()
+                    )
+
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(
+                        LinearGradient(colors: [.blue.opacity(0.4), .purple.opacity(0.4)],
+                                       startPoint: .leading, endPoint: .trailing),
+                        lineWidth: 1
+                    )
+            )
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Source Image Drop
@@ -201,26 +263,65 @@ struct ExportView: View {
     // MARK: - Export Button
 
     private var exportButtonSection: some View {
-        HStack {
-            Spacer()
-            Button {
-                runExport()
-            } label: {
-                if isExporting {
-                    HStack(spacing: 10) {
-                        ProgressView().controlSize(.small)
-                        Text("Exporting...")
+        VStack(spacing: 12) {
+            // Pro upsell banner — only shown when not pro
+            if !store.isPro {
+                Button { showPaywall = true } label: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "crown.fill")
+                            .foregroundStyle(.yellow)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Free: Home Screen only")
+                                .font(.subheadline.weight(.semibold))
+                            Text("Unlock Pro for App Store, Top Shelf & all layers")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Text("Unlock")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(
+                                LinearGradient(colors: [.blue, .purple],
+                                               startPoint: .leading, endPoint: .trailing),
+                                in: Capsule()
+                            )
                     }
-                    .padding(.horizontal, 8)
-                } else {
-                    Label("Export All Sizes", systemImage: "square.and.arrow.up.fill")
-                        .font(.headline)
-                        .padding(.horizontal, 8)
+                    .padding(14)
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))
+                    .overlay(RoundedRectangle(cornerRadius: 14)
+                        .strokeBorder(Color.yellow.opacity(0.25), lineWidth: 1))
                 }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.glassProminent)
-            .disabled(sourceImage == nil || isExporting)
-            Spacer()
+
+            HStack {
+                Spacer()
+                Button {
+                    runExport()
+                } label: {
+                    if isExporting {
+                        HStack(spacing: 10) {
+                            ProgressView().controlSize(.small)
+                            Text("Exporting...")
+                        }
+                        .padding(.horizontal, 8)
+                    } else {
+                        Label(store.isPro ? "Export All Sizes" : "Export (Home Screen)",
+                              systemImage: "square.and.arrow.up.fill")
+                            .font(.headline)
+                            .padding(.horizontal, 8)
+                    }
+                }
+                .buttonStyle(.glassProminent)
+                .disabled(sourceImage == nil || isExporting)
+                Spacer()
+            }
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView(store: store)
         }
     }
 
@@ -326,7 +427,8 @@ struct ExportView: View {
         exportResult = .idle
 
         do {
-            let count = try exportAllSizes(sourceImage: src, layers: layerImages, outputURL: outputURL)
+            let count = try exportAllSizes(sourceImage: src, layers: layerImages,
+                                           outputURL: outputURL, proOnly: store.isPro)
             isExporting = false
             exportResult = .success(count: count, folderURL: outputURL)
             // Also show a prominent alert
