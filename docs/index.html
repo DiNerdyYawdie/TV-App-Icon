@@ -96,7 +96,7 @@
     }
     .btn-ghost:hover { border-color: var(--accent); color: var(--accent); opacity: 1; }
 
-    /* App preview card */
+    /* Features */
     .preview {
       max-width: 860px;
       margin: 0 auto 80px;
@@ -117,10 +117,7 @@
       border-radius: 16px;
       padding: 24px;
     }
-    .feature-icon {
-      font-size: 2rem;
-      margin-bottom: 12px;
-    }
+    .feature-icon { font-size: 2rem; margin-bottom: 12px; }
     .feature-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
     .feature-card p { font-size: 0.875rem; color: var(--muted); line-height: 1.6; }
 
@@ -131,12 +128,7 @@
       padding: 0 24px;
     }
     .steps h2 { font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 40px; letter-spacing: -0.5px; }
-    .step {
-      display: flex;
-      gap: 20px;
-      align-items: flex-start;
-      margin-bottom: 28px;
-    }
+    .step { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 28px; }
     .step-num {
       min-width: 36px; height: 36px;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
@@ -146,6 +138,26 @@
     }
     .step-content h3 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
     .step-content p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+
+    /* Support */
+    .support {
+      max-width: 700px;
+      margin: 0 auto 80px;
+      padding: 0 24px;
+    }
+    .support h2 { font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 16px; letter-spacing: -0.5px; }
+    .support p { font-size: 0.95rem; color: var(--muted); line-height: 1.7; text-align: center; margin-bottom: 12px; }
+    .support a { color: var(--accent); text-decoration: none; }
+    .support a:hover { text-decoration: underline; }
+    .support-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-top: 24px;
+    }
+    .support-box h3 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
+    .support-box p { font-size: 0.9rem; color: var(--muted); text-align: left; margin-bottom: 0; }
 
     /* Footer */
     footer {
@@ -168,6 +180,7 @@
   <div class="nav-logo">TV <span>AppIcon</span></div>
   <div>
     <a href="index.html">Home</a>
+    <a href="#support">Support</a>
     <a href="privacy.html">Privacy</a>
     <a href="terms.html">Terms</a>
   </div>
@@ -175,10 +188,10 @@
 
 <section class="hero">
   <div class="badge">Mac App — Free to Try</div>
-  <h1>Export <span>tvOS App Icons</span><br>in seconds</h1>
-  <p>Drop your image, hit export. TV AppIcon generates every required icon size and layer for your Apple TV app — organized exactly how Xcode expects them.</p>
-  <a href="#" class="btn">Download on Mac App Store</a>
-  <a href="#features" class="btn btn-ghost">Learn more</a>
+  <h1>Export <span>App Icons</span><br>in seconds</h1>
+  <p>Drop your image, hit export. TV AppIcon generates every required icon size and layer for your smart TV app — organized exactly how Xcode expects them.</p>
+  <a href="#features" class="btn">Learn more</a>
+  <a href="#support" class="btn btn-ghost">Get support</a>
 </section>
 
 <section class="preview" id="features">
@@ -191,7 +204,7 @@
     <div class="feature-card">
       <div class="feature-icon">🪟</div>
       <h3>Parallax layers</h3>
-      <p>Provide separate Front, Middle, and Back layer images to take full advantage of tvOS's beautiful parallax effect.</p>
+      <p>Provide separate Front, Middle, and Back layer images to take full advantage of the beautiful parallax effect.</p>
     </div>
     <div class="feature-card">
       <div class="feature-icon">📁</div>
@@ -223,6 +236,21 @@
       <h3>Export and drag into Xcode</h3>
       <p>Choose an output folder. TV AppIcon exports everything, organized by slot and layer, ready for your asset catalog.</p>
     </div>
+  </div>
+</section>
+
+<section class="support" id="support">
+  <h2>Support</h2>
+  <p>Have a question or running into an issue? We're here to help.</p>
+  <div class="support-box">
+    <h3>📧 Email Support</h3>
+    <p>Send us an email at <a href="mailto:dinerdapps@outlook.com">dinerdapps@outlook.com</a> and we'll get back to you as soon as possible.</p>
+  </div>
+  <div class="support-box" style="margin-top: 16px;">
+    <h3>📋 Common Questions</h3>
+    <p><strong style="color: var(--text);">What image size should I use?</strong><br>A 1024×1024 PNG works best as your source image.</p>
+    <p style="margin-top: 12px;"><strong style="color: var(--text);">Do I need separate layer images?</strong><br>No — if you only provide a source image, it will be used for all layers automatically.</p>
+    <p style="margin-top: 12px;"><strong style="color: var(--text);">How do I restore my Pro purchase?</strong><br>Open the app, go to Settings, and tap "Restore Purchase".</p>
   </div>
 </section>
 

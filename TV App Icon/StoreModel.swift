@@ -16,7 +16,7 @@ class StoreModel {
 
     var proProduct: Product?
     var tipProducts: [Product] = []
-    var isPro: Bool = false
+    var isPro: Bool = true // TEMP: remove before release
 
     var isLoading = false
     var purchaseError: String? = nil
@@ -124,14 +124,7 @@ class StoreModel {
     // MARK: - Refresh Status
 
     func refreshPurchaseStatus() async {
-        for await result in Transaction.currentEntitlements {
-            if case .verified(let transaction) = result,
-               transaction.productID == Self.proProductID {
-                isPro = true
-                return
-            }
-        }
-        isPro = false
+        isPro = true // TEMP: remove before release
     }
 
     // MARK: - Transaction Listener
